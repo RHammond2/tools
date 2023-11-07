@@ -2,7 +2,11 @@
 
 Please read the TODO items before attempting to run this script!
 
-Requirements
+Python
+------
+3.10+
+
+Dependencies
 ------------
 cdsapi (see first TODO below)
 pandas
@@ -90,79 +94,9 @@ def retrieve_era5_for_year(year, *, data_path, base_fn, area, c=cds_client):
             "area": area,
             "year": f"{year}",
             "grid": "0.5/0.5",
-            "time": [
-                "00:00",
-                "01:00",
-                "02:00",
-                "03:00",
-                "04:00",
-                "05:00",
-                "06:00",
-                "07:00",
-                "08:00",
-                "09:00",
-                "10:00",
-                "11:00",
-                "12:00",
-                "13:00",
-                "14:00",
-                "15:00",
-                "16:00",
-                "17:00",
-                "18:00",
-                "19:00",
-                "20:00",
-                "21:00",
-                "22:00",
-                "23:00",
-            ],
-            "day": [
-                "01",
-                "02",
-                "03",
-                "04",
-                "05",
-                "06",
-                "07",
-                "08",
-                "09",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18",
-                "19",
-                "20",
-                "21",
-                "22",
-                "23",
-                "24",
-                "25",
-                "26",
-                "27",
-                "28",
-                "29",
-                "30",
-                "31",
-            ],
-            "month": [
-                "01",
-                "02",
-                "03",
-                "04",
-                "05",
-                "06",
-                "07",
-                "08",
-                "09",
-                "10",
-                "11",
-                "12",
-            ],
+            "time": [f"{str(i).zfill(2)}:00" for i in range(24)],  # 0 -> 23 in "00:00" format
+            "day": [f"{str(i).zfill(2)}" for i in range(1, 32)],  # 1 -> 31 in "01" format
+            "month": [f"{str(i).zfill(2)}" for i in range(1, 13)],  # 1 -> 12 in "01" format
             "variable": [
                 "100m_u_component_of_wind",
                 "100m_v_component_of_wind",
@@ -184,11 +118,38 @@ def retrieve_era5_for_year(year, *, data_path, base_fn, area, c=cds_client):
     print(f"{year} downloaded")
 
 
-def load_grib(base_fn, year):
+def load_grib(base_fn: str, year: int | str) -> xr.Dataset:
+    """Loads the .grib data for :py:attr:`year` as "<base_fn>_<year>.grib" to an xarray Dataset.
+
+    Parameters
+    ----------
+    base_fn : str
+        The base file name used in saving the data.
+    year : int | str
+        The year for which data should be extracted.
+
+    Returns
+    -------
+    xarray.Dataset
+        The :py:attr:`year` data as an xarray Dataset.
+    """
     return xr.load_dataset(data_path / f"{base_fn}_{year}.grib")
 
 
-def calculate_additional_columns(ds):
+def calculate_additional_columns(ds: xr.Dataset) -> xr.Dataset:
+    """Loads the .grib data for :py:attr:`year` as "<base_fn>_<year>.grib" to an xarray Dataset.
+
+    Parameters
+    ----------
+    ds : xarray.Dataset
+        The combined xarray Dataset with all years present.
+
+    Returns
+    -------
+    xarray.Dataset
+        The Dataset with all the following additional parameters calculated: 
+        "windspeed_10m", "windspeed_100m", "wind_direction_10m", and "wind_direction_100m".
+    """
     ds = ds.assign(
         windspeed_10m=np.sqrt(ds.u10**2 + ds.v10**2),
         windspeed_100m=np.sqrt(ds.u100**2 + ds.v100**2),

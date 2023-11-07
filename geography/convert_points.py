@@ -1,3 +1,17 @@
+"""
+Converts localized easting/northing coordinates to WGS-84 coordinates.
+
+Python
+------
+3.9+
+
+Dependencies
+------------
+pandas>2
+pyproj>3
+"""
+
+
 import argparse
 from pprint import pprint
 from pathlib import Path
@@ -8,7 +22,32 @@ from pyproj.aoi import AreaOfInterest
 from pyproj.database import query_utm_crs_info
 from pyproj.transformer import Transformer
 
+
 def convert_points(reference_latitude: float, reference_longitude: float, epsg_code: str, file_name: Path, relative_points: bool) -> None:
+    """Converts the relative points to WGS-84 points via a reference coordinate.
+
+    Parameters
+    ----------
+    reference_latitude : float
+        The reference WGS-84 latitudinal point.
+    reference_longitude : float
+        The reference WGS-84 longitudinal point.
+    epsg_code : str
+        The EPSG code corresponding to the reference coordiantes.
+    file_name : Path
+        The file where the localized "easting" and "northing" points will be contained. The output
+        coordinates will be saved to a file with the same base name with "_converted_coordinates"
+        added before the ".csv".
+    relative_points : bool
+        True, if the points are in a relative position to the reference coordinates, and False
+        if the points are ready-to-convert easting/northing coordinates.
+    
+    Returns
+    -------
+    None
+        The coordinates are saved as a new file with the same name, but with
+        "_converted_coordinates" appended to the end, and with "latitude" and "longitude" columns.
+    """
     
     # Build the transformers and get the reference point
     crs = CRS.from_epsg(epsg_code)
@@ -35,6 +74,20 @@ def convert_points(reference_latitude: float, reference_longitude: float, epsg_c
 
 
 def get_reference_EPSG(reference_latitude: float, reference_longitude: float) -> str:
+    """Finds the EPSG code for the reference WGS-84 latitude and longitude.
+
+    Parameters
+    ----------
+    reference_latitude : float
+        Reference WGS-84 latitudinal point.
+    reference_longitude : float
+        Reference WGS-84 longitudinal point.
+
+    Returns
+    -------
+    str
+        The string EPSG code.
+    """
     utm_crs_list = query_utm_crs_info(
         datum_name="WGS 84",
         area_of_interest=AreaOfInterest(

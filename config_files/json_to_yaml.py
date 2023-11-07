@@ -1,4 +1,15 @@
-"""Converts JSON documents to YAML documents"""
+"""
+Converts JSON documents to YAML documents.
+
+Python
+------
+3.8+
+
+Dependencies
+------------
+pyyaml
+"""
+
 
 import os
 import json
