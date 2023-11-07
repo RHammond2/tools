@@ -1,0 +1,45 @@
+# VSCode Configurations
+
+## Plugins
+
+- autoDocstring
+- Black Formatter
+- Even Better TOML
+- Excel Viewer
+- GitHub Actions
+- GitHub Pull Requests and Issues
+- GitHub Themes
+- GitLens
+- indent-rainbow
+- isort
+- JSON
+- JSON Crack
+- Jupyter
+- Jupyter Cell Tags
+- Jupyter Keymap
+- Jupyter Notebook Renderers
+- Jupyter Slide Show
+- Markdown All in One
+- Markdown Preview Mermaid Support
+- Markdown Theme Kit
+- markdownlint
+- Mermaid Markdown Syntax Highlighting
+- Mermaid Preview
+- Mermaid Theme
+- MyST-Markdown
+- pre-commit
+- Pylance
+- Python
+- Quarto
+- Rainbow CSV
+- reStructuredText
+- reStructuredTExt Syntax highlighting
+- Ruff
+- rust-analyzer
+- TODO Highlight
+- Todo Tree
+- vscode-icons
+- vscode-pdf
+- vscode-position
+- YAML
+- Julia
