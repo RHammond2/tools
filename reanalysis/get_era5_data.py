@@ -118,11 +118,13 @@ def retrieve_era5_for_year(year, *, data_path, base_fn, area, c=cds_client):
     print(f"{year} downloaded")
 
 
-def load_grib(base_fn: str, year: int | str) -> xr.Dataset:
+def load_grib(data_path: Path, base_fn: str, year: int | str) -> xr.Dataset:
     """Loads the .grib data for :py:attr:`year` as "<base_fn>_<year>.grib" to an xarray Dataset.
 
     Parameters
     ----------
+    data_path : pathlib.Path
+        The folder for saving the data.
     base_fn : str
         The base file name used in saving the data.
     year : int | str
@@ -246,7 +248,7 @@ if __name__ == "__main__":
         ds = xr.load_dataset(fn, engine="netcdf4")
     else:
         ds_list = []
-        load_grib_partial = partial(load_grib, base_fn)
+        load_grib_partial = partial(load_grib, data_path, base_fn)
         with Pool(nodes) as pool:
             with tqdm(total=N, desc="Loading grib data") as pbar:
                 for ds in pool.imap_unordered(load_grib_partial, year_list):
