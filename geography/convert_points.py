@@ -53,7 +53,7 @@ def convert_points(reference_latitude: float, reference_longitude: float, epsg_c
     crs = CRS.from_epsg(epsg_code)
     proj = Transformer.from_crs(crs.geodetic_crs, crs)
     proj_reverse = Transformer.from_crs(crs, crs.geodetic_crs)
-    base_easting, base_northing = proj.transform(reference_longitude, reference_latitude)
+    base_easting, base_northing = proj.transform(reference_latitude, reference_longitude)
     
     # Load in the data
     df = pd.read_csv(file_name)
@@ -62,7 +62,7 @@ def convert_points(reference_latitude: float, reference_longitude: float, epsg_c
     spatial_coordinates = df[["easting", "northing"]].values
     if relative_points:
         # If the points are relative to the reference coordinate, put them in the correct frame
-        spatial_coordinates += (base_easting + base_northing)
+        spatial_coordinates += (base_easting, base_northing)
     
     # Convert to the WGS-84 and add to the dataframe
     coordinates = [proj_reverse.transform(e, n) for (e, n) in spatial_coordinates]
