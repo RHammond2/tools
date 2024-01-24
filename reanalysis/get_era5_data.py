@@ -249,14 +249,15 @@ if __name__ == "__main__":
     else:
         ds_list = []
         load_grib_partial = partial(load_grib, data_path, base_fn)
-        with Pool(nodes) as pool:
-            with tqdm(total=N, desc="Loading grib data") as pbar:
-                for ds in pool.imap_unordered(load_grib_partial, year_list):
-                    ds_list.append(ds)
-                    pbar.update()
+        # with Pool(nodes) as pool:
+        #     with tqdm(total=N, desc="Loading grib data") as pbar:
+        #         for ds in pool.imap_unordered(load_grib_partial, year_list):
+        #             ds_list.append(ds)
+        #             pbar.update()
 
         print("Combining years into a single data set")
-        ds = xr.concat(ds_list, dim="time").sortby("time")
+        # ds = xr.concat(ds_list, dim="time").sortby("time")
+        ds = xr.open_mfdataset(f"{data_path}/{base_fn}_*.grib", parallel=True)
 
         print("Computing additional columns")
         ds = calculate_additional_columns(ds)
