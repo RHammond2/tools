@@ -51,11 +51,15 @@ column_map = {
     "v10": "windspeed_10m_v",
     "shts": "waveheight_swell",
     "shww": "waveheight_wind",
-    "pp1d": "wave_period",
+    "pp1d": "peak_wave_period",
     "p140209": "air_density",
     # "rhoao": "air_density",
     "sst": "surface_temperature",
     "sp": "surface_pressure",
+    "tp": "total_precipitation",
+    "d2m": "2m_dewpoint_temperature",
+    "t2m": "2m_temperature",
+    "mwp": "mean_wave_period",
 }
 
 column_order = [
@@ -72,10 +76,14 @@ column_order = [
     "windspeed_10m_v",
     "waveheight_swell",
     "waveheight_wind",
-    "wave_period",
+    "peak_wave_period",
+    "mean_wave_period"
     "air_density",
     "surface_temperature",
     "surface_pressure",
+    "total_precipitation",
+    "2m_dewpoint_temperature",
+    "2m_temperature",
 ]
 
 
@@ -90,7 +98,8 @@ def retrieve_era5_for_year(year, *, data_path, base_fn, area, c=cds_client):
         "reanalysis-era5-single-levels",
         {
             "product_type": "reanalysis",
-            "format": "grib",
+            "data_format": "grib",
+            "download_format": "unarchived",
             "area": area,
             "year": f"{year}",
             "grid": "0.5/0.5",
@@ -102,17 +111,19 @@ def retrieve_era5_for_year(year, *, data_path, base_fn, area, c=cds_client):
                 "100m_v_component_of_wind",
                 "10m_u_component_of_wind",
                 "10m_v_component_of_wind",
-                "air_density_over_the_oceans",
                 "peak_wave_period",
-                "sea_surface_temperature",
+                "mean_wave_period",
                 "significant_height_of_combined_wind_waves_and_swell",
                 "significant_height_of_total_swell",
                 "significant_height_of_wind_waves",
                 "surface_pressure",
+                "2m_dewpoint_temperature",
+                "2m_temperature",
+                "total_precipitation",
             ],
         },
         fn,
-    )
+    ).download()
     fn = Path(fn).resolve()
     shutil.move(fn, data_path)
     print(f"{year} downloaded")
